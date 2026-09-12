@@ -75,6 +75,8 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
                 js('scrollTo({top:0,behavior:"instant"})');shot(f'hero-{width}')
                 for section in ('styles','download','install'):
                     js(f'scrollTo({{top:document.getElementById("{section}").getBoundingClientRect().top+scrollY,behavior:"instant"}})');shot(f'{section}-{width}')
+                    if width==390 and section=='download':
+                        assert js('document.getElementById("apk-download").getBoundingClientRect().bottom')<=750,'The mobile download CTA must come before the feature list, within easy reach'
         rpc('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-reduced-motion','value':'reduce'}]})
         assert js('getComputedStyle(document.documentElement).scrollBehavior')=='auto'
         assert js('!document.querySelector("video").autoplay')

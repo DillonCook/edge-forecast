@@ -4,4 +4,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 
 /* Compact product summary replaces the separate feature section. */
-.download-section{border-top:1px solid var(--line)}.product-specs{list-style:none;padding:0;margin:28px 0 0;color:var(--muted);font-size:14px;max-width:410px}.product-specs li{padding:11px 0;border-top:1px solid var(--line);line-height:1.6}.product-specs strong{display:block;color:var(--paper);font-size:13px}
+.download-section{border-top:1px solid var(--line);row-gap:0}.download-heading{grid-column:1;grid-row:1}.download-panel{grid-column:2;grid-row:1 / span 2}.product-specs{grid-column:1;grid-row:2;list-style:none;padding:0;margin:0;color:var(--muted);font-size:14px;max-width:410px}.product-specs li{padding:11px 0;border-top:1px solid var(--line);line-height:1.6}.product-specs strong{display:block;color:var(--paper);font-size:13px}
+@media(max-width:700px){.download-section{row-gap:20px}.download-panel{grid-column:1;grid-row:2}.product-specs{grid-column:1;grid-row:3;margin-top:8px;max-width:none}}
