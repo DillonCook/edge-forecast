@@ -2,8 +2,8 @@
 (() => {
   const labels = {a: "Round blast", b: "Flared blast", c: "Layered blast", d: "Classic slim", e: "Fine needle", f: "Soft fade"};
   const modes = {
-    following: "A set-length trail travels behind the moving head, even as it passes 12. On your watch, choose a short, medium or long following distance.",
-    fixed: "The starting end stays at 12 while the trail grows clockwise. It clears when the head returns to 12, then starts again. Following distance does not affect this mode."
+    following: "A fixed-length trail follows the head. Choose short, medium or long on your watch.",
+    fixed: "The tail starts at 12, grows through the minute, then clears at 12. Following distance does not apply."
   };
   const display = document.getElementById("style-image");
   const caption = document.getElementById("style-caption");
