@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#111a16">
   <meta name="description" content="Edge Forecast is a free Wear OS watch face with clear weather, customizable complications, six animated seconds styles and two trail modes. Download the preview APK.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <link rel="canonical" href="https://dilloncook.github.io/edge-forecast/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Edge Forecast — Time, with an edge.">
@@ -15,9 +15,10 @@
   <meta property="og:image:alt" content="Edge Forecast watch face rendered preview and free download announcement">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
   <link rel="preload" href="assets/a-following.webp" as="image">
   <script src="site.js?v=2" defer></script>
+  <script src="download-counter.js?v=1" defer></script>
   <title>Edge Forecast — Free Wear OS Watch Face</title>
 </head>
 <body>
@@ -90,10 +91,11 @@
       <div class="release-line"><strong>Edge Forecast</strong><span class="release-tag">Preview release</span></div>
       <p class="version">v1.5.17 <span>· 1.44 MB · Signed APK</span></p>
       <p><strong>Requires Watch Face Format 5</strong>, introduced with <a href="https://android-developers.googleblog.com/2026/05/whats-new-wear-os-7.html" target="_blank" rel="noopener noreferrer">Wear OS 7</a>. Designed for round watches—not Apple Watch or phones. Check your watch’s software first.</p>
-      <a class="button primary full-width" id="apk-download" href="downloads/edge-forecast-1.5.17.apk" download>Download free APK <span aria-hidden="true">↓</span></a>
+      <a class="button primary full-width" id="apk-download" href="https://github.com/DillonCook/edge-forecast/releases/download/v1.5.17/edge-forecast-1.5.17.apk" download referrerpolicy="no-referrer">Download free APK <span aria-hidden="true">↓</span></a>
+      <div class="download-stats" id="download-stats" data-state="loading" aria-live="polite" aria-busy="true"><strong id="download-count">…</strong> tracked downloads<small id="download-count-status">Loading GitHub’s count…</small><noscript><small>Enable JavaScript to load the count.</small></noscript></div>
       <a class="install-link" href="#install">How to install on your watch</a>
       <p class="release-note">This release has not yet been verified on a physical watch. Compatibility, AOD transitions and battery life remain unverified.</p>
-      <details class="technical"><summary>Release notes &amp; checksum</summary><p>Build, format, memory and signing checks passed. An earlier report of freezing while entering AOD at low battery remains unresolved.</p><p>SHA-256</p><code class="fingerprint">fce74397f5a54768218ccf72e2612a68df304beb58ba7bf5fcb65925190467cf</code><a href="downloads/SHA256SUMS.txt" download>Download checksum</a><a href="release.json">Release metadata</a></details>
+      <details class="technical"><summary>Release notes &amp; checksum</summary><p>The counter totals APK downloads from GitHub Releases. It includes repeats and verification downloads, not unique users or installs. Earlier direct-link downloads are not included; updates may lag.</p><p>Build, format, memory and signing checks passed. An earlier report of freezing while entering AOD at low battery remains unresolved.</p><p>SHA-256</p><code class="fingerprint">fce74397f5a54768218ccf72e2612a68df304beb58ba7bf5fcb65925190467cf</code><a href="downloads/SHA256SUMS.txt" download>Download checksum</a><a href="release.json">Release metadata</a></details>
     </div>
     <ul class="product-specs">
         <li><strong>Weather</strong> Full forecast, compact or hidden.</li>
@@ -118,7 +120,7 @@
   <section class="wrap section-pad faq" aria-labelledby="faq-heading"><div><p class="eyebrow">HELP</p><h2 id="faq-heading">A few answers.</h2></div><div class="faq-list">
     <details><summary>Why might weather or phone battery be missing?</summary><p>Weather needs the watch’s weather service and permissions. Phone battery needs the <a href="#phone-battery-setup">companion setup above</a>. Tapping weather targets Samsung Weather, which must be installed.</p></details>
     <details><summary>Updates or issues?</summary><p>Updates are manual downloads from this page. <a href="https://github.com/DillonCook/edge-forecast/issues" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a> with your watch model and software version. Don’t include pairing codes or private details.</p></details>
-    <details><summary>Does this page track me?</summary><p>No analytics or ad scripts are added. GitHub may log visits for security; see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">its privacy policy</a>. Watch services and companion apps have their own policies.</p></details>
+    <details><summary>Does this page track me?</summary><p>GitHub provides the download count and may log visits and download requests. No additional analytics or ad service is used; see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">its privacy policy</a>. Watch services and companion apps have their own policies.</p></details>
   </div></section>
 </main>
 <footer class="wrap footer"><a class="brand" href="#">edge forecast<span class="brand-period">.</span></a><p>An independent project by <a href="https://github.com/DillonCook">Dillon Cook</a>.<br>Not affiliated with Samsung or Google.</p><a href="https://github.com/DillonCook/edge-forecast">Project on GitHub ↗</a></footer>

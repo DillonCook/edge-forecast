@@ -2,11 +2,13 @@
 Requires websocket-client and psutil. Screenshots/downloads stay in ignored .qa/.
 """
 from pathlib import Path
-import os,sys,subprocess,tempfile,time,json,urllib.request,base64,hashlib,shutil
+import os,sys,subprocess,tempfile,time,json,urllib.request,urllib.parse,base64,hashlib,shutil,re
 import websocket,psutil
 ROOT=Path(__file__).resolve().parents[1]
 URL=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8874/docs/'
 QA=ROOT/'.qa'/('live' if URL.startswith('https:') else 'local');QA.mkdir(parents=True,exist_ok=True)
+SKIP_DOWNLOAD='--skip-download' in sys.argv
+API='https://api.github.com/repos/DillonCook/edge-forecast/releases'
 CHROME=shutil.which('google-chrome') or str(Path(os.environ.get('PROGRAMFILES',''))/'Google/Chrome/Application/chrome.exe')
 assert Path(CHROME).exists(),'Install Chrome or expose google-chrome on PATH'
 assert urllib.request.urlopen(URL,timeout=20).status==200,'Page unavailable'
@@ -27,7 +29,7 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
             while True:
                 message=json.loads(ws.recv())
                 if message.get('method')=='Runtime.exceptionThrown':exceptions.append(message['params'])
-                if message.get('method')=='Network.responseReceived':network.append(message['params']['response'])
+                if message.get('method')=='Network.responseReceived':network.append(message['params']['response']|{'requestId':message['params']['requestId']})
                 if message.get('id')==seq:
                     assert 'error' not in message,message
                     return message.get('result',{})
@@ -48,6 +50,17 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         rpc('Page.navigate',{'url':URL});wait('document.readyState==="complete"')
         assert js('document.querySelector(".enhancement").hidden===false'),'Style controls must be usable after enhancement loads'
         wait('document.querySelector(".hero-product img").complete && document.querySelector(".hero-product img").naturalWidth>0')
+        wait('document.getElementById("download-stats").dataset.state==="ready"')
+        initial_count=int(js('document.getElementById("download-stats").dataset.total'))
+        asset_counts={}
+        for response in [r for r in network if r['url'].startswith(API)]:
+            releases=json.loads(rpc('Network.getResponseBody',{'requestId':response['requestId']})['body'])
+            for release in releases:
+                if release['draft']:continue
+                for asset in release['assets']:
+                    if re.fullmatch(r'edge-forecast-\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?\.apk',asset['name']) and asset['state']=='uploaded':
+                        asset_counts[asset['id']]=max(asset_counts.get(asset['id'],0),asset['download_count'])
+        assert asset_counts and initial_count==sum(asset_counts.values()),'Displayed counter does not match real GitHub response'
         shot('desktop-hero')
         # One public end-to-end flow: choose any of the six styles with either trail.
         choices=[]
@@ -86,19 +99,30 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         video=js('({duration:document.querySelector("video").duration,width:document.querySelector("video").videoWidth,height:document.querySelector("video").videoHeight})')
         assert video=={'duration':8,'width':800,'height':890},video
         js('document.querySelector("video").pause()')
-        downloads=QA/'downloads';downloads.mkdir(exist_ok=True)
-        rpc('Browser.setDownloadBehavior',{'behavior':'allow','downloadPath':str(downloads.resolve()),'eventsEnabled':True})
-        js('document.getElementById("apk-download").click()',gesture=True)
-        release=json.loads((ROOT/'docs/release.json').read_text());filename=Path(release['file']).name;target=downloads/filename;deadline=time.monotonic()+30
-        while not target.exists() or target.stat().st_size!=release['bytes']:
-            if time.monotonic()>deadline:raise AssertionError('Actual browser APK download did not finish')
-            time.sleep(.1)
-        assert hashlib.sha256(target.read_bytes()).hexdigest()==release['sha256']
+        release=json.loads((ROOT/'docs/release.json').read_text());download_sha=None
+        if not SKIP_DOWNLOAD:
+            downloads=Path(tempfile.mkdtemp(prefix='download-',dir=QA))
+            rpc('Browser.setDownloadBehavior',{'behavior':'allow','downloadPath':str(downloads.resolve()),'eventsEnabled':True})
+            js('document.getElementById("apk-download").click()',gesture=True)
+            release=json.loads((ROOT/'docs/release.json').read_text());filename=Path(release['file']).name;target=downloads/filename;deadline=time.monotonic()+30
+            while not target.exists() or target.stat().st_size!=release['bytes']:
+                if time.monotonic()>deadline:raise AssertionError('Actual browser APK download did not finish')
+                time.sleep(.1)
+            assert hashlib.sha256(target.read_bytes()).hexdigest()==release['sha256']
+            download_sha=hashlib.sha256(target.read_bytes()).hexdigest()
         failures=[{'url':r['url'],'status':r['status']} for r in network if r['status']>=400]
         assert not failures,failures
         assert not exceptions,exceptions
-        assert all(r['url'].startswith(URL) for r in network if not r['url'].startswith('data:')),'Unexpected third-party request'
-        result={'url':URL,'styleModeCases':choices,'viewports':viewports,'keyboard':'PASS','reducedMotion':'PASS','faq':'PASS','video':video,'actualBrowserDownloadSha256':release['sha256'],'consoleExceptions':exceptions,'httpErrors':failures}
+        allowed_download_hosts={'github.com','release-assets.githubusercontent.com','objects.githubusercontent.com'}
+        assert all(r['url'].startswith(URL) or r['url'].startswith(API+'?') or urllib.parse.urlsplit(r['url']).hostname in allowed_download_hosts for r in network if not r['url'].startswith('data:')),'Unexpected third-party request'
+        # Force an API outage in this isolated browser; no synthetic count is served.
+        rpc('Network.setBlockedURLs',{'urls':[API+'*']});rpc('Page.reload',{'ignoreCache':True})
+        wait('document.readyState==="complete" && document.getElementById("download-stats").dataset.state==="unavailable"')
+        assert js('document.getElementById("download-count").textContent')=='—'
+        assert js('document.getElementById("apk-download").href')==release['downloadUrl']
+        assert js('document.getElementById("download-stats").dataset.total') is None
+        rpc('Network.setBlockedURLs',{'urls':[]})
+        result={'url':URL,'styleModeCases':choices,'viewports':viewports,'keyboard':'PASS','reducedMotion':'PASS','faq':'PASS','video':video,'actualBrowserDownloadSha256':download_sha,'sharedCountMatchedGithub':initial_count,'counterOutageFallback':'PASS','consoleExceptions':exceptions,'httpErrors':failures}
         (QA/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))
     finally:
         if ws:ws.close()

@@ -25,8 +25,12 @@ for tag,a in page.nodes:
         p=(DOCS/unquote(url.path)).resolve();assert p.is_relative_to(DOCS.resolve()) and p.is_file(),value
     if tag=='script':assert a.get('src') and not urlsplit(a['src']).scheme
     if tag=='video':assert 'controls' in a and 'autoplay' not in a
-release=json.loads((DOCS/'release.json').read_text());apk=DOCS/release['file']
+release=json.loads((DOCS/'release.json').read_text());apk=ROOT/release['artifact']
 assert release['version']=='1.5.17' and release['physicalDeviceVerified'] is False
+assert release['downloadUrl']=='https://github.com/DillonCook/edge-forecast/releases/download/v1.5.17/'+release['file']
+assert next(a['href'] for t,a in page.nodes if a.get('id')=='apk-download')==release['downloadUrl']
+assert 'download-stats' in ids and 'download-count' in ids
+assert not any(DOCS.rglob('*.apk')), 'Do not serve a parallel uncounted APK link'
 assert apk.stat().st_size==release['bytes'] and hashlib.sha256(apk.read_bytes()).hexdigest()==release['sha256']
 assert release['sha256'] in html and release['sha256'] in (DOCS/'downloads/SHA256SUMS.txt').read_text()
 assert f"{release['bytes']/1000000:.2f} MB" in html

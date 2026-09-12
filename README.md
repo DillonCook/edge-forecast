@@ -6,11 +6,11 @@ A standalone showcase and free APK download page for Edge Forecast, an independe
 
 ## Hosting
 
-GitHub Pages serves `docs/` from the `main` branch. No custom domain, build service, analytics, signup form or paid dependency. `.nojekyll` keeps the site static. All imagery and video are first-party local assets. The repository contains the website and public download, not the private watch-face development workspace or signing materials.
+GitHub Pages serves `docs/` from the `main` branch. No custom domain, build service, signup form or paid dependency. A local script reads public GitHub Release download counts without credentials or click tracking. `.nojekyll` keeps the site static. All imagery and video are first-party local assets. The repository contains the website and public download, not the private watch-face development workspace or signing materials.
 
 ## Download
 
-`docs/downloads/edge-forecast-1.5.17.apk` is the exact signed 1.5.17 APK, not a rebuild. Its fingerprint is in `docs/downloads/SHA256SUMS.txt` and metadata in `docs/release.json`. Free download/use does not imply that the APK or bundled third-party materials have been relicensed as open source.
+The download button now points to the GitHub Release asset. `artifacts/edge-forecast-1.5.17.apk` retains the exact signed APK for reproducible integrity checks, outside the Pages publication tree. The previous static Pages APK endpoint is retired. Its fingerprint is in `docs/downloads/SHA256SUMS.txt` and metadata in `docs/release.json`. Free download/use does not imply that the APK or bundled third-party materials have been relicensed as open source.
 
 This is a **preview release requiring WFF 5 support**, introduced with Wear OS 7. The APK's lower Android install floor is not a claim of renderer compatibility with older Wear OS versions. Automated build validation does not certify individual devices, battery life or AOD transitions.
 
@@ -23,6 +23,12 @@ Compatibility reference: https://android-developers.googleblog.com/2026/05/whats
 Phone-side installation reference: https://freepoc.org/wear-installer-2-help-page/
 
 Hosting/privacy reference: https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages
+
+## Download counter
+
+The counter sums `download_count` for published `edge-forecast-<version>.apk` Release assets, including prereleases, across paginated API responses. Counts are shared and server-sourced; the page never increments them locally. API errors or rate limits show an unavailable state, not a fabricated zero. Counting began with Release hosting on September 12, 2026; earlier static downloads cannot be recovered. Counts include repeats and verification downloads and do not measure unique people, completed installations, or all repository clones. Deleting Release assets would lose their counters; retain them across updates.
+
+Run `node --test scripts/test_download_counter.cjs` for fixture-based pagination/filtering/failure tests. Actual published counts must be verified separately through GitHub and the live browser.
 
 ## Development
 
