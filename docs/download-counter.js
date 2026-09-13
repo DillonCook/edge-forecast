@@ -55,7 +55,7 @@
       number.textContent = new Intl.NumberFormat().format(total);
       container.dataset.total = String(total);
       container.dataset.state = "ready";
-      status.textContent = "Since September 12, 2026 · GitHub Release downloads";
+      status.textContent = "All versions · GitHub Release downloads since September 12, 2026";
     } catch (_) {
       number.textContent = "—";
       delete container.dataset.total;

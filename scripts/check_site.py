@@ -26,15 +26,15 @@ for tag,a in page.nodes:
     if tag=='script':assert a.get('src') and not urlsplit(a['src']).scheme
     if tag=='video':assert 'controls' in a and 'autoplay' not in a
 release=json.loads((DOCS/'release.json').read_text());apk=ROOT/release['artifact']
-assert release['version']=='1.5.17' and release['physicalDeviceVerified'] is False
-assert release['downloadUrl']=='https://github.com/DillonCook/edge-forecast/releases/download/v1.5.17/'+release['file']
+assert release['version']=='1.5.21' and release['physicalDeviceVerified'] is False
+assert release['downloadUrl']=='https://github.com/DillonCook/edge-forecast/releases/download/v1.5.21/'+release['file']
 assert next(a['href'] for t,a in page.nodes if a.get('id')=='apk-download')==release['downloadUrl']
 assert 'download-stats' in ids and 'download-count' in ids
 assert not any(DOCS.rglob('*.apk')), 'Do not serve a parallel uncounted APK link'
 assert apk.stat().st_size==release['bytes'] and hashlib.sha256(apk.read_bytes()).hexdigest()==release['sha256']
 assert release['sha256'] in html and release['sha256'] in (DOCS/'downloads/SHA256SUMS.txt').read_text()
 assert f"{release['bytes']/1000000:.2f} MB" in html
-assert 'Watch Face Format 5' in html and 'Wear OS 7' in html and 'not yet been verified on a physical watch' in html
+assert 'Watch Face Format 5' in html and 'Wear OS 7' in html and 'on-watch validation is incomplete' in html
 assert 'not watch footage' in html and '10× speed' in html and 'Custom APK' in html
 assert {a.get('data-style') for t,a in page.nodes if 'data-style' in a}==set('abcdef')
 for s in 'abcdef':

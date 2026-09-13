@@ -90,6 +90,18 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
                     js(f'scrollTo({{top:document.getElementById("{section}").getBoundingClientRect().top+scrollY,behavior:"instant"}})');shot(f'{section}-{width}')
                     if width==390 and section=='download':
                         assert js('document.getElementById("apk-download").getBoundingClientRect().bottom')<=750,'The mobile download CTA must come before the feature list, within easy reach'
+        # Check each new instruction anchor in the actual mobile layout.
+        rpc('Emulation.setDeviceMetricsOverride',{'width':390,'height':1000,'deviceScaleFactor':1,'mobile':False})
+        for section in ('enable-debugging','pair-watch','connect-watch','install-apk','phone-battery-setup'):
+            js(f'scrollTo({{top:document.getElementById("{section}").getBoundingClientRect().top+scrollY-20,behavior:"instant"}})');settle()
+            assert js(f'document.getElementById("{section}").getBoundingClientRect().width <= innerWidth')
+            if section in ('enable-debugging','connect-watch','phone-battery-setup'):shot(section+'-390')
+        assert js('document.getElementById("required-apps").innerText.includes("Android phone only")')
+        js('document.getElementById("release-limitations").open=true;scrollTo({top:document.getElementById("release-limitations").getBoundingClientRect().top+scrollY-20,behavior:"instant"})');settle()
+        assert js('Math.abs(document.getElementById("release-limitations").getBoundingClientRect().top-20)<2')
+        assert js('document.getElementById("release-limitations").innerText.includes("text-based phone battery stays")')
+        shot('release-limitations-390')
+        js('document.getElementById("release-limitations").open=false')
         rpc('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-reduced-motion','value':'reduce'}]})
         assert js('getComputedStyle(document.documentElement).scrollBehavior')=='auto'
         assert js('!document.querySelector("video").autoplay')

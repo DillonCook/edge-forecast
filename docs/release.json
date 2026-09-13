@@ -1,15 +1,16 @@
 {
-  "version": "1.5.17",
-  "versionCode": 32,
+  "version": "1.5.21",
+  "versionCode": 36,
   "packageId": "com.dilloncook.edgeforecast",
   "wffVersion": 5,
-  "file": "edge-forecast-1.5.17.apk",
-  "bytes": 1435282,
-  "sha256": "fce74397f5a54768218ccf72e2612a68df304beb58ba7bf5fcb65925190467cf",
+  "file": "edge-forecast-1.5.21.apk",
+  "bytes": 1436566,
+  "sha256": "bfa57e2d2472fbf41877a73df9e13a8ae11dc83e90f25f826164ac3603026752",
   "status": "preview release",
   "physicalDeviceVerified": false,
-  "artifact": "artifacts/edge-forecast-1.5.17.apk",
-  "downloadUrl": "https://github.com/DillonCook/edge-forecast/releases/download/v1.5.17/edge-forecast-1.5.17.apk",
-  "githubAssetId": 559838175,
-  "trackingStartedAt": "2026-09-12T19:39:23Z"
+  "artifact": "artifacts/edge-forecast-1.5.21.apk",
+  "downloadUrl": "https://github.com/DillonCook/edge-forecast/releases/download/v1.5.21/edge-forecast-1.5.21.apk",
+  "githubAssetId": 561912153,
+  "trackingStartedAt": "2026-09-12T19:39:23Z",
+  "downloadMetric": "Cumulative GitHub Release APK asset downloads across all retained published versions, including previews; not users or installs."
 }

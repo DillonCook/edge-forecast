@@ -34,3 +34,16 @@ test('UI renders server totals and honest unavailable state, never locally incre
   await renderCounter(container,number,status,async()=>{throw Error('offline')});
   assert.equal(container.dataset.state,'unavailable');assert.equal(number.textContent,'—');assert.match(status.textContent,/unavailable/i);assert.equal(container.dataset.total,undefined);
 });
+
+test('publishing a new version at zero preserves all previous asset downloads',async()=>{
+  const {getTotal}=counter();
+  const releases=[{draft:false,prerelease:true,assets:[asset(21,0,'edge-forecast-1.5.21.apk')]},{draft:false,prerelease:true,assets:[asset(17,3,'edge-forecast-1.5.17.apk')]}];
+  assert.equal(await getTotal(async()=>response(releases)),3);
+  releases[0].assets[0].download_count=2;
+  assert.equal(await getTotal(async()=>response(releases)),5);
+});
+test('counter labels the project total as all versions',async()=>{
+  const {renderCounter}=counter();const number={},status={},container={dataset:{},setAttribute(){}};
+  await renderCounter(container,number,status,async()=>response([{draft:false,assets:[asset(17,3)]}]));
+  assert.match(status.textContent,/All versions/);
+});
