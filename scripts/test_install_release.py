@@ -18,7 +18,7 @@ class InstallRelease(unittest.TestCase):
         self.assertIn('com.weartools.phonebattcomp',html)
     def test_current_release_and_cross_version_count_disclosure(self):
         html=(ROOT/'docs/index.html').read_text(encoding='utf-8');meta=json.loads((ROOT/'docs/release.json').read_text())
-        self.assertEqual(meta['version'],'1.5.21');self.assertEqual(meta['versionCode'],36)
+        self.assertEqual(meta['version'],'1.5.24');self.assertEqual(meta['versionCode'],39)
         self.assertEqual(meta['trackingStartedAt'],'2026-09-12T19:39:23Z')
         self.assertIn('all versions',html)
         for term in ('text-based phone battery stays','extra %','centering','on-watch','Flat settings'):

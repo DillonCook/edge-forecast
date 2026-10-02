@@ -1,1 +1,1 @@
-bfa57e2d2472fbf41877a73df9e13a8ae11dc83e90f25f826164ac3603026752  edge-forecast-1.5.21.apk
+97a9eca83d5676956d47b9ecab3cd7cf8297fff6a5cd04db3980c48871afad50  edge-forecast-1.5.24.apk

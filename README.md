@@ -10,7 +10,7 @@ GitHub Pages serves `docs/` from the `main` branch. No custom domain, build serv
 
 ## Download
 
-The download button now points to the GitHub Release asset. `artifacts/edge-forecast-1.5.21.apk` retains the current exact signed APK for reproducible integrity checks, outside the Pages publication tree. The previous static Pages APK endpoint is retired. Its fingerprint is in `docs/downloads/SHA256SUMS.txt` and metadata in `docs/release.json`. Free download/use does not imply that the APK or bundled third-party materials have been relicensed as open source.
+The download button now points to the GitHub Release asset. `artifacts/edge-forecast-1.5.24.apk` retains the current exact signed APK for reproducible integrity checks, outside the Pages publication tree. The previous static Pages APK endpoint is retired. Its fingerprint is in `docs/downloads/SHA256SUMS.txt` and metadata in `docs/release.json`. Free download/use does not imply that the APK or bundled third-party materials have been relicensed as open source.
 
 This is a **preview release requiring WFF 5 support**, introduced with Wear OS 7. The APK's lower Android install floor is not a claim of renderer compatibility with older Wear OS versions. Automated build validation does not certify individual devices, battery life or AOD transitions.
 
@@ -22,7 +22,7 @@ The public page gives the complete phone-only method using **Wear Installer 2 by
 
 ## Media and claims
 
-The six stills in each trail mode and the video derive from the packaged WFF effect geometry and image assets. The face data is illustrative. They are not physical-watch screenshots; the video is silent and runs at 10x speed. The existing style previews remain source-derived illustrations. Version 1.5.21 changes editor metadata and phone/empty battery layout, not those seconds effects. Phone text colors/formatting, on-watch editor stability, and empty-slot/AOD transitions retain the limitations stated beside the download.
+The six stills in each trail mode and the video derive from the packaged WFF effect geometry and image assets. The face data is illustrative. They are not physical-watch screenshots; the video is silent and runs at 10x speed. The existing style previews remain source-derived illustrations. Version 1.5.24 includes the additional sampled Comet Dust and Energy Filaments effects, smoother filament joins and a modest dust brightness lift. The existing media showcases the original six effects only, not those two additions. Phone text colors/formatting, on-watch editor stability, and empty-slot/AOD transitions retain the limitations stated beside the download.
 
 Compatibility reference: https://android-developers.googleblog.com/2026/05/whats-new-wear-os-7.html
 
