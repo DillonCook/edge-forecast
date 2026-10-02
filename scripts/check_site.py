@@ -26,8 +26,8 @@ for tag,a in page.nodes:
     if tag=='script':assert a.get('src') and not urlsplit(a['src']).scheme
     if tag=='video':assert 'controls' in a and 'autoplay' not in a
 release=json.loads((DOCS/'release.json').read_text());apk=ROOT/release['artifact']
-assert release['version']=='1.5.24' and release['physicalDeviceVerified'] is False
-assert release['downloadUrl']=='https://github.com/DillonCook/edge-forecast/releases/download/v1.5.24/'+release['file']
+assert release['version']=='1.5.25' and release['physicalDeviceVerified'] is False
+assert release['downloadUrl']=='https://github.com/DillonCook/edge-forecast/releases/download/v1.5.25/'+release['file']
 assert next(a['href'] for t,a in page.nodes if a.get('id')=='apk-download')==release['downloadUrl']
 assert 'download-stats' in ids and 'download-count' in ids
 assert not any(DOCS.rglob('*.apk')), 'Do not serve a parallel uncounted APK link'
