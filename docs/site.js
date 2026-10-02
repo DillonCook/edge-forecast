@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  const labels = {a: "Round blast", b: "Flared blast", c: "Layered blast", d: "Classic slim", e: "Fine needle", f: "Soft fade"};
+  const labels = {a: "Round blast", b: "Flared blast", c: "Layered blast", d: "Classic slim", e: "Fine needle", f: "Soft fade", g: "Ribbon trail", h: "Sparkling dust"};
   const modes = {
     following: "A fixed-length trail follows the head. Choose short, medium or long on your watch.",
     fixed: "The tail starts at 12, grows through the minute, then clears at 12. Following distance does not apply."
@@ -8,7 +8,7 @@
   const display = document.getElementById("style-image");
   const caption = document.getElementById("style-caption");
   const controls = document.querySelector(".enhancement");
-  const selection = {style: "d", mode: "following"};
+  const selection = {style: "g", mode: "following"};
   let latest = 0;
 
   function updatePreview() {

@@ -36,8 +36,8 @@ assert release['sha256'] in html and release['sha256'] in (DOCS/'downloads/SHA25
 assert f"{release['bytes']/1000000:.2f} MB" in html
 assert 'Watch Face Format 5' in html and 'Wear OS 7' in html and 'on-watch validation is incomplete' in html
 assert 'not watch footage' in html and '10× speed' in html and 'Custom APK' in html
-assert {a.get('data-style') for t,a in page.nodes if 'data-style' in a}==set('abcdef')
-for s in 'abcdef':
+assert {a.get('data-style') for t,a in page.nodes if 'data-style' in a}==set('abcdefgh')
+for s in 'abcdefgh':
     for mode in ('following','fixed'):assert (DOCS/'assets'/f'{s}-{mode}.webp').is_file()
 assert (DOCS/'.nojekyll').exists() and not (DOCS/'CNAME').exists()
 for p in DOCS.rglob('*'):
@@ -48,4 +48,4 @@ for p in DOCS.rglob('*'):
         assert not re.search(r'(?:[A-Z]:[\\/]Users[\\/]|gh[pousr]_[A-Za-z0-9]{20}|BEGIN (?:RSA |OPENSSH )?PRIVATE KEY|@gmail\.com)',text),p
 with zipfile.ZipFile(apk) as z:
     assert not any(n.endswith(('.jks','.keystore','.env')) for n in z.namelist())
-print('PASS: links, progressive HTML, local assets, all six styles/two modes, compatibility/testing disclosures, exact APK fingerprint, publication scope and no custom domain.')
+print('PASS: links, progressive HTML, local assets, all eight styles/two modes, compatibility/testing disclosures, exact APK fingerprint, publication scope and no custom domain.')

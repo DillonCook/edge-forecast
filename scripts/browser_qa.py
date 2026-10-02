@@ -64,7 +64,7 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         shot('desktop-hero')
         # One public end-to-end flow: choose any of the six styles with either trail.
         choices=[]
-        for style in 'abcdef':
+        for style in 'abcdefgh':
             for mode in ('following','fixed'):
                 js(f'document.querySelector("[data-style={style}]").click();document.querySelector("input[value={mode}]").click()')
                 wait(f'document.getElementById("style-image").getAttribute("aria-busy")==="false" && document.getElementById("style-image").src.endsWith("/{style}-{mode}.webp")')

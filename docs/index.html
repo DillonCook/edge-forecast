@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#111a16">
-  <meta name="description" content="Edge Forecast is a free Wear OS watch face with clear weather, customizable complications, six animated seconds styles and two trail modes. Download the preview APK.">
+  <meta name="description" content="Edge Forecast is a free Wear OS watch face with clear weather, customizable complications, eight animated seconds styles and two trail modes. Download the preview APK.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <link rel="canonical" href="https://dilloncook.github.io/edge-forecast/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Edge Forecast — Time, with an edge.">
-  <meta property="og:description" content="A free Wear OS watch face. Clear weather, six seconds effects, and a look you can make your own.">
+  <meta property="og:description" content="A free Wear OS watch face. Clear weather, eight seconds effects, and a look you can make your own.">
   <meta property="og:url" content="https://dilloncook.github.io/edge-forecast/">
   <meta property="og:image" content="https://dilloncook.github.io/edge-forecast/assets/social-preview.jpg">
   <meta property="og:image:alt" content="Edge Forecast watch face rendered preview and free download announcement">
@@ -17,7 +17,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=4">
   <link rel="preload" href="assets/a-following.webp" as="image">
-  <script src="site.js?v=2" defer></script>
+  <script src="site.js?v=3" defer></script>
   <script src="download-counter.js?v=2" defer></script>
   <title>Edge Forecast — Free Wear OS Watch Face</title>
 </head>
@@ -44,21 +44,25 @@
 
   <section class="paper" id="styles" aria-labelledby="styles-heading">
     <div class="wrap section-pad">
-      <div class="section-heading"><p class="eyebrow">THE STYLES</p><h2 id="styles-heading">Choose your edge.</h2><p>Three broad Energy Blasts. Three slim Comets. Or keep the original clean ring.</p></div>
+      <div class="section-heading"><p class="eyebrow">THE STYLES</p><h2 id="styles-heading">Choose your edge.</h2><p>Eight animated seconds circles—including the new ribbon and glowing, sparkling dust trails. Or keep the original clean ring.</p></div>
       <div class="style-lab">
         <figure class="style-preview">
-          <img id="style-image" src="assets/d-following.webp" width="720" height="720" loading="lazy" alt="Classic slim comet with a following trail, shown at 15 seconds into the minute">
-          <figcaption><strong id="style-caption" aria-live="polite">Classic slim · Following</strong><span>Rendered at :15 · Sample data</span></figcaption>
+          <img id="style-image" src="assets/g-following.webp" width="720" height="720" loading="lazy" alt="Ribbon trail with a following trail, shown at 15 seconds into the minute">
+          <figcaption><strong id="style-caption" aria-live="polite">Ribbon trail · Following</strong><span>Rendered at :15 · Sample data</span></figcaption>
         </figure>
         <div class="style-controls">
           <div class="enhancement" hidden>
+            <fieldset><legend>New seconds circles</legend><div class="choice-grid">
+              <button type="button" class="style-choice" data-style="g" aria-pressed="true"><small>NEW</small>Ribbon trail</button>
+              <button type="button" class="style-choice" data-style="h" aria-pressed="false"><small>NEW</small>Sparkling dust</button>
+            </div></fieldset>
             <fieldset><legend>Energy blasts</legend><div class="choice-grid">
               <button type="button" class="style-choice" data-style="a" aria-pressed="false"><small>A</small>Round blast</button>
               <button type="button" class="style-choice" data-style="b" aria-pressed="false"><small>B</small>Flared blast</button>
               <button type="button" class="style-choice" data-style="c" aria-pressed="false"><small>C</small>Layered blast</button>
             </div></fieldset>
             <fieldset><legend>Slim comets</legend><div class="choice-grid">
-              <button type="button" class="style-choice" data-style="d" aria-pressed="true"><small>D</small>Classic slim</button>
+              <button type="button" class="style-choice" data-style="d" aria-pressed="false"><small>D</small>Classic slim</button>
               <button type="button" class="style-choice" data-style="e" aria-pressed="false"><small>E</small>Fine needle</button>
               <button type="button" class="style-choice" data-style="f" aria-pressed="false"><small>F</small>Soft fade</button>
             </div></fieldset>
@@ -68,7 +72,7 @@
             </div></fieldset>
           </div>
           <p id="mode-description" class="mode-description">A fixed-length trail follows the head. Choose short, medium or long on your watch.</p>
-          <p class="small-note">These previews show the original six effects; Comet Dust and Energy Filaments are additional choices in v1.5.24, not shown here. Flat settings on your watch keep the circle controls together.</p>
+          <p class="small-note">Ribbon trail uses flowing, luminous filaments; Sparkling dust leaves a glowing particle trail. On your watch, choose Energy Filaments or Comet Dust. Previews use v1.5.24 artwork with illustrative data—not watch screenshots.</p>
           <noscript><p>Enable JavaScript for the selector. Video and download work without it.</p></noscript>
           <a class="text-link ink-link" href="#motion">Watch the demo <span aria-hidden="true">↓</span></a>
         </div>
@@ -77,10 +81,10 @@
   </section>
 
   <section class="motion-section wrap section-pad" id="motion" aria-labelledby="motion-heading">
-    <div class="motion-copy"><p class="eyebrow">IN MOTION</p><h2 id="motion-heading">See the difference.</h2>
+    <div class="motion-copy"><p class="eyebrow">IN MOTION</p><h2 id="motion-heading">Two new ways<br>to circle the dial.</h2><p>Ribbon trail and Sparkling dust, shown in both trail modes.</p>
       <dl class="motion-definitions"><div><dt>Following</dt><dd>A constant distance behind the head.</dd></div><div><dt>Fixed at 12</dt><dd>Grows from twelve, then clears each minute.</dd></div></dl>
     </div>
-    <figure class="motion-video"><video controls playsinline preload="none" poster="assets/motion-poster.webp" width="800" height="890" aria-label="Silent comparison of Following and Fixed at 12 trail modes at ten times normal speed"><source src="assets/trail-modes.mp4" type="video/mp4">Your browser does not support this video. <a href="assets/trail-modes.mp4">Download the motion preview.</a></video><figcaption>10× speed · Silent rendered demo, not watch footage.</figcaption></figure>
+    <figure class="motion-video"><video controls playsinline preload="none" poster="assets/latest-trails-poster.webp" width="800" height="890" aria-label="Silent comparison of Ribbon trail and Sparkling dust in Following and Fixed at 12 modes at ten times normal speed"><source src="assets/latest-trails.mp4" type="video/mp4">Your browser does not support this video. <a href="assets/latest-trails.mp4">Download the motion preview.</a></video><figcaption>10× speed · Silent rendered demo, not watch footage.</figcaption></figure>
   </section>
 
 
