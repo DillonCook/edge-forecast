@@ -52,6 +52,7 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         wait('document.querySelector(".hero-product img").complete && document.querySelector(".hero-product img").naturalWidth>0')
         wait('document.getElementById("download-stats").dataset.state==="ready"')
         initial_count=int(js('document.getElementById("download-stats").dataset.total'))
+        assert js('!!document.querySelector(".hero #download-stats")'), 'Counter must live in the hero'
         asset_counts={}
         for response in [r for r in network if r['url'].startswith(API)]:
             releases=json.loads(rpc('Network.getResponseBody',{'requestId':response['requestId']})['body'])

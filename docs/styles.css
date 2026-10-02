@@ -8,4 +8,16 @@
 .download-section{border-top:1px solid var(--line);row-gap:0}.download-heading{grid-column:1;grid-row:1}.download-panel{grid-column:2;grid-row:1 / span 2}.product-specs{grid-column:1;grid-row:2;list-style:none;padding:0;margin:0;color:var(--muted);font-size:14px;max-width:410px}.product-specs li{padding:11px 0;border-top:1px solid var(--line);line-height:1.6}.product-specs strong{display:block;color:var(--paper);font-size:13px}
 @media(max-width:700px){.download-section{row-gap:20px}.download-panel{grid-column:1;grid-row:2}.product-specs{grid-column:1;grid-row:3;margin-top:8px;max-width:none}}
 
+
+/* Hero offer and real shared download count. */
+.hero h1{font-size:clamp(56px,5.5vw,80px);letter-spacing:-3.5px;line-height:1.04}
+.hero h1 em{letter-spacing:-3px}
+.hero-description{font-size:19px;line-height:1.6;max-width:470px}
+.hero-download-stats{margin:24px 0 0;padding:16px 0 12px;border-top:1px solid var(--line);border-bottom:0;text-align:left;font-size:14px}
+.hero-download-stats strong{font-size:38px;line-height:1.1;margin-right:8px}
+.hero-download-stats small{font-size:11px;margin:7px 0 0;max-width:400px}
+.hero .hero-fine{margin-top:13px}
+@media(min-width:701px) and (max-width:1000px){.hero h1{font-size:clamp(43px,5.7vw,57px);letter-spacing:-2.5px}}
+@media(max-width:700px){.hero h1{font-size:clamp(43px,10.4vw,68px);letter-spacing:-2.5px}.hero h1 em{letter-spacing:-2px}.hero-description{font-size:17px}.hero-download-stats{margin-top:21px}.hero-download-stats strong{font-size:34px}}
+
 .required-apps{border-top:1px solid var(--paper-line);margin:28px 0;padding-top:24px}.required-apps h3{font-size:23px;letter-spacing:-.5px}.required-apps dl{margin:0}.required-apps dt{font-size:17px;font-weight:700;margin-top:20px}.required-apps dd{margin:5px 0 0;color:var(--paper-muted);font-size:14px;line-height:1.7}.required-apps dd strong{display:block;color:var(--ink)}.install-steps li p+p{margin-top:12px}.install-intro .text-link{white-space:normal}
