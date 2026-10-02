@@ -7,14 +7,14 @@ import websocket,psutil
 ROOT=Path(__file__).resolve().parents[1]
 URL=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8874/docs/'
 QA=ROOT/'.qa'/('live' if URL.startswith('https:') else 'local');QA.mkdir(parents=True,exist_ok=True)
-SKIP_DOWNLOAD='--skip-download' in sys.argv
+VERIFY_DOWNLOAD='--verify-apk-download' in sys.argv and '--skip-download' not in sys.argv
 API='https://api.github.com/repos/DillonCook/edge-forecast/releases'
 CHROME=shutil.which('google-chrome') or str(Path(os.environ.get('PROGRAMFILES',''))/'Google/Chrome/Application/chrome.exe')
 assert Path(CHROME).exists(),'Install Chrome or expose google-chrome on PATH'
 assert urllib.request.urlopen(URL,timeout=20).status==200,'Page unavailable'
 with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_errors=True) as profile:
     process=subprocess.Popen([CHROME,'--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check','--remote-debugging-port=0','--remote-debugging-address=127.0.0.1','--remote-allow-origins=http://localhost','--user-data-dir='+profile,'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-    ws=None;exceptions=[];network=[];seq=0
+    ws=None;exceptions=[];network=[];requests=[];seq=0
     try:
         active=Path(profile)/'DevToolsActivePort';deadline=time.monotonic()+20
         while not active.exists():
@@ -29,6 +29,7 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
             while True:
                 message=json.loads(ws.recv())
                 if message.get('method')=='Runtime.exceptionThrown':exceptions.append(message['params'])
+                if message.get('method')=='Network.requestWillBeSent':requests.append(message['params']['request']['url'])
                 if message.get('method')=='Network.responseReceived':network.append(message['params']['response']|{'requestId':message['params']['requestId']})
                 if message.get('id')==seq:
                     assert 'error' not in message,message
@@ -46,6 +47,9 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         def shot(name):
             settle();r=rpc('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False});(QA/(name+'.png')).write_bytes(base64.b64decode(r['data']))
         rpc('Page.enable');rpc('Runtime.enable');rpc('Network.enable')
+        blocked_downloads=[] if VERIFY_DOWNLOAD else ['*://github.com/*/releases/download/*','*://release-assets.githubusercontent.com/*','*://objects.githubusercontent.com/*','*.apk*']
+        rpc('Network.setBlockedURLs',{'urls':blocked_downloads})
+        if not VERIFY_DOWNLOAD:rpc('Browser.setDownloadBehavior',{'behavior':'deny'})
         rpc('Emulation.setDeviceMetricsOverride',{'width':1440,'height':1000,'deviceScaleFactor':1,'mobile':False})
         rpc('Page.navigate',{'url':URL});wait('document.readyState==="complete"')
         assert js('document.querySelector(".enhancement").hidden===false'),'Style controls must be usable after enhancement loads'
@@ -53,7 +57,7 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         wait('document.getElementById("download-stats").dataset.state==="ready"')
         initial_count=int(js('document.getElementById("download-stats").dataset.total'))
         assert js('!!document.querySelector(".hero #download-stats")'), 'Counter must live in the hero'
-        asset_counts={}
+        asset_counts={};published_assets={}
         for response in [r for r in network if r['url'].startswith(API)]:
             releases=json.loads(rpc('Network.getResponseBody',{'requestId':response['requestId']})['body'])
             for release in releases:
@@ -61,9 +65,10 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
                 for asset in release['assets']:
                     if re.fullmatch(r'edge-forecast-\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?\.apk',asset['name']) and asset['state']=='uploaded':
                         asset_counts[asset['id']]=max(asset_counts.get(asset['id'],0),asset['download_count'])
+                        published_assets[asset['id']]=asset
         assert asset_counts and initial_count==sum(asset_counts.values()),'Displayed counter does not match real GitHub response'
         shot('desktop-hero')
-        # One public end-to-end flow: choose any of the six styles with either trail.
+        # One public end-to-end flow: choose any of the eight styles with either trail.
         choices=[]
         for style in 'abcdefgh':
             for mode in ('following','fixed'):
@@ -113,7 +118,13 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         assert video=={'duration':8,'width':800,'height':890},video
         js('document.querySelector("video").pause()')
         release=json.loads((ROOT/'docs/release.json').read_text());download_sha=None
-        if not SKIP_DOWNLOAD:
+        asset=published_assets[release['githubAssetId']]
+        assert asset['digest']=='sha256:'+release['sha256'], 'Published asset digest differs from release metadata'
+        assert asset['size']==release['bytes'] and asset['name']==release['file']
+        assert asset['browser_download_url']==release['downloadUrl']
+        assert js('document.getElementById("apk-download").href')==release['downloadUrl']
+        assert hashlib.sha256((ROOT/release['artifact']).read_bytes()).hexdigest()==release['sha256']
+        if VERIFY_DOWNLOAD:
             downloads=Path(tempfile.mkdtemp(prefix='download-',dir=QA))
             rpc('Browser.setDownloadBehavior',{'behavior':'allow','downloadPath':str(downloads.resolve()),'eventsEnabled':True})
             js('document.getElementById("apk-download").click()',gesture=True)
@@ -129,13 +140,15 @@ with tempfile.TemporaryDirectory(prefix='hermes-website-qa-',ignore_cleanup_erro
         allowed_download_hosts={'github.com','release-assets.githubusercontent.com','objects.githubusercontent.com'}
         assert all(r['url'].startswith(URL) or r['url'].startswith(API+'?') or urllib.parse.urlsplit(r['url']).hostname in allowed_download_hosts for r in network if not r['url'].startswith('data:')),'Unexpected third-party request'
         # Force an API outage in this isolated browser; no synthetic count is served.
-        rpc('Network.setBlockedURLs',{'urls':[API+'*']});rpc('Page.reload',{'ignoreCache':True})
+        rpc('Network.setBlockedURLs',{'urls':blocked_downloads+[API+'*']});rpc('Page.reload',{'ignoreCache':True})
         wait('document.readyState==="complete" && document.getElementById("download-stats").dataset.state==="unavailable"')
         assert js('document.getElementById("download-count").textContent')=='—'
         assert js('document.getElementById("apk-download").href')==release['downloadUrl']
         assert js('document.getElementById("download-stats").dataset.total') is None
-        rpc('Network.setBlockedURLs',{'urls':[]})
-        result={'url':URL,'styleModeCases':choices,'viewports':viewports,'keyboard':'PASS','reducedMotion':'PASS','faq':'PASS','video':video,'actualBrowserDownloadSha256':download_sha,'sharedCountMatchedGithub':initial_count,'counterOutageFallback':'PASS','consoleExceptions':exceptions,'httpErrors':failures}
+        rpc('Network.setBlockedURLs',{'urls':blocked_downloads})
+        apk_requests=[url for url in requests if '/releases/download/' in url or urllib.parse.urlsplit(url).path.lower().endswith('.apk') or urllib.parse.urlsplit(url).hostname in {'release-assets.githubusercontent.com','objects.githubusercontent.com'}]
+        if not VERIFY_DOWNLOAD:assert not apk_requests, 'Unexpected APK request during routine QA: '+repr(apk_requests)
+        result={'downloadVerificationMode':'explicit-real-download' if VERIFY_DOWNLOAD else 'metadata-only','apkRequests':apk_requests,'publishedAssetDigestVerified':asset['digest'],'url':URL,'styleModeCases':choices,'viewports':viewports,'keyboard':'PASS','reducedMotion':'PASS','faq':'PASS','video':video,'actualBrowserDownloadSha256':download_sha,'sharedCountMatchedGithub':initial_count,'counterOutageFallback':'PASS','consoleExceptions':exceptions,'httpErrors':failures}
         (QA/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))
     finally:
         if ws:ws.close()
